@@ -30,6 +30,11 @@ public class ProductService implements ProductServiceInterface {
         if (product == null) {
             throw new IllegalArgumentException("le produit ne doit pas être null");
         }
+
+        if (product.getId() != null) {
+            throw new IllegalArgumentException("L'Id du produit doit être null à la création");
+        }
+
         if (product.getName() == null || product.getName().isEmpty() || product.getName().isBlank()) {
             throw new IllegalArgumentException("le nom du produit doit être rempli");
         }

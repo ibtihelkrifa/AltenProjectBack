@@ -96,6 +96,16 @@ public class ProductServiceTest {
         assertEquals("le prix du produit doit être supérieur ou égal à zero", exception.getMessage());
     }
 
+    @Test
+    public void shouldThrowExceptionWhenProductIdIsNotNull() {
+        ProductDTO product = new ProductDTO();
+        product.setId(1);
+        product.setName("My product");
+        product.setPrice((double) -100);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> productService.createProduct(product));
+        assertEquals("L'Id du produit doit être null à la création", exception.getMessage());
+
+    }
 
     @Test
     public void shouldReturnIdOfSavedProductSuccessfully() {

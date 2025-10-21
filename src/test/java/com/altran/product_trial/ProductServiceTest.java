@@ -12,6 +12,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -143,5 +145,29 @@ public class ProductServiceTest {
         List<ProductDTO> result = productService.getAllProducts();
         assertEquals(2, result.size());
         assertTrue(result.containsAll(List.of(productDTO1, productDTO2)));
+    }
+
+    @Test
+    public void getProductByIdShouldThrowExceptionWhenProductIdIsNull() {
+        assertThrows(IllegalArgumentException.class,() -> productService.getProductById(null));
+    }
+
+    @Test
+    public void getProductByIdShouldThrowExceptionWhenNoProductFound() {
+        assertThrows(NoSuchElementException.class,() -> productService.getProductById(0));
+    }
+
+    @Test
+    public void getProductByIdShouldReturnProductWhenProductFound() {
+        Product productSaved = new Product();
+        productSaved.setId(0);
+        when(productRepositoryPort.findProductById(any(Integer.class))).thenReturn(Optional.of(productSaved));
+
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setId(0);
+        when(productMapper.mapEntityToDTO(any(Product.class))).thenReturn(productDTO);
+
+
+        assertEquals(productDTO, productService.getProductById(0));
     }
 }

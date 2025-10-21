@@ -2,13 +2,14 @@ package com.altran.product_trial.application;
 
 import com.altran.product_trial.application.port.in.ProductServiceInterface;
 import com.altran.product_trial.application.port.out.ProductRepositoryPort;
-import com.altran.product_trial.dto.ProductDTO;
-import com.altran.product_trial.domain.ProductMapper;
 import com.altran.product_trial.domain.Product;
+import com.altran.product_trial.domain.ProductMapper;
+import com.altran.product_trial.dto.ProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class ProductService implements ProductServiceInterface {
@@ -29,14 +30,24 @@ public class ProductService implements ProductServiceInterface {
         if (product == null) {
             throw new IllegalArgumentException("le produit ne doit pas être null");
         }
-        if(product.getName() == null || product.getName().isEmpty() || product.getName().isBlank()) {
+        if (product.getName() == null || product.getName().isEmpty() || product.getName().isBlank()) {
             throw new IllegalArgumentException("le nom du produit doit être rempli");
         }
-        if(product.getPrice() < 0) {
+        if (product.getPrice() < 0) {
             throw new IllegalArgumentException("le prix du produit doit être supérieur ou égal à zero");
         }
         Product createdProduct = productRepositoryPort.save(productMapper.mapDTOToEntity(product));
         return createdProduct.getId();
+    }
+
+    public ProductDTO getProductById(Integer productId) {
+
+        if (productId == null) {
+            throw new IllegalArgumentException("productId ne doit pas être null");
+        }
+        Product product = productRepositoryPort.findProductById(productId)
+                .orElseThrow(() -> new NoSuchElementException("Aucun produit trouvé avec l'id " + productId));
+        return productMapper.mapEntityToDTO(product);
     }
 
 }

@@ -22,9 +22,14 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(productId);
     }
 
-    @GetMapping("/")
+    @GetMapping
     public List<ProductDTO> getAllProducts() {
         return this.productServiceInterface.getAllProducts();
+    }
+
+    @GetMapping("/{productId}")
+    public ProductDTO getProductById(@PathVariable Integer productId) {
+        return this.productServiceInterface.getProductById(productId);
     }
 
 }

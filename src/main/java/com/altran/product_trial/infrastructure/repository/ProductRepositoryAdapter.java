@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class ProductRepositoryAdapter implements ProductRepositoryPort {
@@ -14,13 +15,17 @@ public class ProductRepositoryAdapter implements ProductRepositoryPort {
     @Autowired
     private ProductJPARepository productJPARepository;
 
-    @Override
     public Product save(Product product) {
         return productJPARepository.save(product);
     }
 
-    @Override
     public List<Product> findAll() {
         return productJPARepository.findAll();
     }
+
+    public Optional<Product> findProductById(Integer productId) {
+        return productJPARepository.findById(productId);
+    }
+
+
 }

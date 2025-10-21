@@ -8,4 +8,6 @@ public interface ProductServiceInterface {
     List<ProductDTO> getAllProducts();
 
     Integer createProduct(ProductDTO product);
+
+    ProductDTO getProductById(Integer productId);
 }

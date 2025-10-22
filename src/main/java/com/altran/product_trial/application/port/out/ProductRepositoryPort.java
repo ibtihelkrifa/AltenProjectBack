@@ -12,4 +12,6 @@ public interface ProductRepositoryPort {
     List<Product> findAll();
 
     Optional<Product> findProductById(Integer productId);
+
+    void deleteProduct(Integer productId);
 }

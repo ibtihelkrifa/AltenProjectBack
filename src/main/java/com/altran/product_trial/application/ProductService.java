@@ -55,4 +55,35 @@ public class ProductService implements ProductServiceInterface {
         return productMapper.mapEntityToDTO(product);
     }
 
+    public ProductDTO updateProduct(ProductDTO productDTO) {
+
+        if (productDTO == null) {
+            throw new IllegalArgumentException("le produit à modifier ne doit pas être null");
+        }
+        if (productDTO.getId() == null) {
+            throw new IllegalArgumentException("l'id du produit à modifier ne doit pas être null");
+        }
+
+        if (productDTO.getName() == null || productDTO.getName().isEmpty() || productDTO.getName().isBlank()) {
+            throw new IllegalArgumentException("l'id du produit à modifier ne doit pas être null");
+        }
+
+        productRepositoryPort.findProductById(productDTO.getId())
+                .orElseThrow(() -> new NoSuchElementException("aucun produit trouvé avec l'id " + productDTO.getId()));
+
+
+        Product productUpdated = productRepositoryPort.save(productMapper.mapDTOToEntity(productDTO));
+
+        return productMapper.mapEntityToDTO(productUpdated);
+    }
+
+    public void deleteProduct(Integer productId) {
+        if (productId == null) {
+            throw new IllegalArgumentException("l'Id du produit à supprimer ne peut pas être null");
+        }
+        productRepositoryPort.findProductById(productId)
+                .orElseThrow(() -> new NoSuchElementException("Aucun produit trouvé avec id " + productId));
+        productRepositoryPort.deleteProduct(productId);
+    }
+
 }

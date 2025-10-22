@@ -10,4 +10,8 @@ public interface ProductServiceInterface {
     Integer createProduct(ProductDTO product);
 
     ProductDTO getProductById(Integer productId);
+
+    ProductDTO updateProduct(ProductDTO productDTO);
+
+    void deleteProduct(Integer productId);
 }

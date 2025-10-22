@@ -27,5 +27,11 @@ public class ProductRepositoryAdapter implements ProductRepositoryPort {
         return productJPARepository.findById(productId);
     }
 
+    @Override
+    public void deleteProduct(Integer productId) {
+        productJPARepository.deleteById(productId);
+    }
+
 
 }
+

@@ -1,10 +1,8 @@
-package com.altran.product_trial.application;
+package com.altran.product_trial.domain.service;
 
-import com.altran.product_trial.application.port.in.ProductServiceInterface;
-import com.altran.product_trial.application.port.out.ProductRepositoryPort;
-import com.altran.product_trial.domain.Product;
-import com.altran.product_trial.domain.ProductMapper;
-import com.altran.product_trial.dto.ProductDTO;
+import com.altran.product_trial.domain.model.Product;
+import com.altran.product_trial.domain.port.in.ProductService;
+import com.altran.product_trial.domain.port.out.ProductRepositoryPort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,20 +10,16 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
-public class ProductService implements ProductServiceInterface {
-
-    @Autowired
-    ProductMapper productMapper;
+public class ProductServiceImpl implements ProductService {
 
     @Autowired
     ProductRepositoryPort productRepositoryPort;
 
-    public List<ProductDTO> getAllProducts() {
-        List<Product> products = productRepositoryPort.findAll();
-        return products.stream().map(product -> productMapper.mapEntityToDTO(product)).toList();
+    public List<Product> getAllProducts() {
+        return productRepositoryPort.findAll();
     }
 
-    public Integer createProduct(ProductDTO product) {
+    public Integer createProduct(com.altran.product_trial.domain.model.Product product) {
 
         if (product == null) {
             throw new IllegalArgumentException("le produit ne doit pas être null");
@@ -41,40 +35,40 @@ public class ProductService implements ProductServiceInterface {
         if (product.getPrice() < 0) {
             throw new IllegalArgumentException("le prix du produit doit être supérieur ou égal à zero");
         }
-        Product createdProduct = productRepositoryPort.save(productMapper.mapDTOToEntity(product));
+        Product createdProduct = productRepositoryPort.save(product);
         return createdProduct.getId();
     }
 
-    public ProductDTO getProductById(Integer productId) {
+    public Product getProductById(Integer productId) {
 
         if (productId == null) {
             throw new IllegalArgumentException("productId ne doit pas être null");
         }
-        Product product = productRepositoryPort.findProductById(productId)
+        com.altran.product_trial.domain.model.Product product = productRepositoryPort.findProductById(productId)
                 .orElseThrow(() -> new NoSuchElementException("Aucun produit trouvé avec l'id " + productId));
-        return productMapper.mapEntityToDTO(product);
+        return product;
     }
 
-    public ProductDTO updateProduct(ProductDTO productDTO) {
+    public Product updateProduct(Product product) {
 
-        if (productDTO == null) {
+        if (product == null) {
             throw new IllegalArgumentException("le produit à modifier ne doit pas être null");
         }
-        if (productDTO.getId() == null) {
+        if (product.getId() == null) {
             throw new IllegalArgumentException("l'id du produit à modifier ne doit pas être null");
         }
 
-        if (productDTO.getName() == null || productDTO.getName().isEmpty() || productDTO.getName().isBlank()) {
+        if (product.getName() == null || product.getName().isEmpty() || product.getName().isBlank()) {
             throw new IllegalArgumentException("l'id du produit à modifier ne doit pas être null");
         }
 
-        productRepositoryPort.findProductById(productDTO.getId())
-                .orElseThrow(() -> new NoSuchElementException("aucun produit trouvé avec l'id " + productDTO.getId()));
+        productRepositoryPort.findProductById(product.getId())
+                .orElseThrow(() -> new NoSuchElementException("aucun produit trouvé avec l'id " + product.getId()));
 
 
-        Product productUpdated = productRepositoryPort.save(productMapper.mapDTOToEntity(productDTO));
+        com.altran.product_trial.domain.model.Product productUpdated = productRepositoryPort.save(product);
 
-        return productMapper.mapEntityToDTO(productUpdated);
+        return productUpdated;
     }
 
     public void deleteProduct(Integer productId) {

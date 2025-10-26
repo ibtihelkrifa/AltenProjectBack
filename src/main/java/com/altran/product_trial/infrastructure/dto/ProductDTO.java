@@ -1,4 +1,4 @@
-package com.altran.product_trial.dto;
+package com.altran.product_trial.infrastructure.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

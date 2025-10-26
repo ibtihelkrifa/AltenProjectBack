@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.altran</groupId>
-	<artifactId>product-trial</artifactId>
+	<artifactId>productEntity-trial</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>product-trial</name>
-	<description>master product trial</description>
+	<name>productEntity-trial</name>
+	<description>master productEntity trial</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -77,6 +77,24 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.8.13</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.12.5</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.12.5</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId> <!-- ou jjwt-gson si tu préfères -->
+            <version>0.12.5</version>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 

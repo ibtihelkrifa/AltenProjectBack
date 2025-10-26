@@ -1,6 +1,7 @@
-package com.altran.product_trial.application.port.out;
+package com.altran.product_trial.domain.port.out;
 
-import com.altran.product_trial.domain.Product;
+
+import com.altran.product_trial.domain.model.Product;
 
 import java.util.List;
 import java.util.Optional;

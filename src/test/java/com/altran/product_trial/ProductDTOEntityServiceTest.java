@@ -1,10 +1,9 @@
 package com.altran.product_trial;
 
-import com.altran.product_trial.application.ProductService;
-import com.altran.product_trial.application.port.out.ProductRepositoryPort;
-import com.altran.product_trial.domain.Product;
-import com.altran.product_trial.domain.ProductMapper;
-import com.altran.product_trial.dto.ProductDTO;
+import com.altran.product_trial.domain.model.Product;
+import com.altran.product_trial.domain.port.out.ProductRepositoryPort;
+import com.altran.product_trial.domain.service.ProductServiceImpl;
+import com.altran.product_trial.infrastructure.mapper.ProductDtoMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,16 +19,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ProductServiceTest {
+public class ProductDTOEntityServiceTest {
 
     @Mock
     private ProductRepositoryPort productRepositoryPort;
 
     @Mock
-    private ProductMapper productMapper;
+    private ProductDtoMapper productMapper;
 
     @InjectMocks
-    private ProductService productService;
+    private ProductServiceImpl productService;
 
     @Test
     public void should_return_product_service_when_called() {
@@ -46,16 +45,14 @@ public class ProductServiceTest {
 
     @Test
     public void should_throw_exception_when_product_name_is_null() {
-        ProductDTO product = new ProductDTO();
-        product.setId(1);
+        Product product = new Product();
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> productService.createProduct(product));
         assertEquals("le nom du produit doit être rempli", exception.getMessage());
     }
 
     @Test
     public void should_throw_exception_when_product_name_is_empty() {
-        ProductDTO product = new ProductDTO();
-        product.setId(1);
+        Product product = new Product();
         product.setName("");
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> productService.createProduct(product));
         assertEquals("le nom du produit doit être rempli", exception.getMessage());
@@ -63,13 +60,12 @@ public class ProductServiceTest {
 
     @Test
     public void should_create_product_when_valid_data_is_provided() {
-        ProductDTO product = new ProductDTO();
-        product.setId(1);
+        Product product = new Product();
         product.setName("My product");
+        product.setPrice(0.0);
 
         Product savedProduct = new Product();
         savedProduct.setId(1);
-        when(productMapper.mapDTOToEntity(any(ProductDTO.class))).thenReturn(savedProduct);
         when(productRepositoryPort.save(any(Product.class))).thenReturn(savedProduct);
 
 
@@ -79,8 +75,7 @@ public class ProductServiceTest {
 
     @Test
     public void should_throw_exception_when_product_name_is_blank() {
-        ProductDTO product = new ProductDTO();
-        product.setId(1);
+        Product product = new Product();
         product.setName("    ");
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> productService.createProduct(product));
         assertEquals("le nom du produit doit être rempli", exception.getMessage());
@@ -88,8 +83,7 @@ public class ProductServiceTest {
 
     @Test
     public void should_throw_exception_when_price_is_negative() {
-        ProductDTO product = new ProductDTO();
-        product.setId(1);
+        Product product = new Product();
         product.setName("My product");
         product.setPrice((double) -100);
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> productService.createProduct(product));
@@ -98,7 +92,7 @@ public class ProductServiceTest {
 
     @Test
     public void shoul_throw_exception_when_product_id_is_not_null() {
-        ProductDTO product = new ProductDTO();
+        Product product = new Product();
         product.setId(1);
         product.setName("My product");
         product.setPrice((double) -100);
@@ -109,15 +103,13 @@ public class ProductServiceTest {
 
     @Test
     public void should_return_Id_of_saved_product_successfully() {
-        ProductDTO product = new ProductDTO();
-        product.setId(1);
+        Product product = new Product();
         product.setName("My product");
         product.setPrice(99.99);
 
 
         Product savedProduct = new Product();
         savedProduct.setId(1);
-        when(productMapper.mapDTOToEntity(any(ProductDTO.class))).thenReturn(savedProduct);
         when(productRepositoryPort.save(any(Product.class))).thenReturn(savedProduct);
 
         Integer productId = productService.createProduct(product);
@@ -140,45 +132,28 @@ public class ProductServiceTest {
         product2.setName("product2");
         when(productRepositoryPort.findAll()).thenReturn(List.of(product1, product2));
 
-        ProductDTO productDTO1 = new ProductDTO();
-        productDTO1.setId(1);
-        productDTO1.setName("product1");
-
-        when(productMapper.mapEntityToDTO(product1)).thenReturn(productDTO1);
-
-        ProductDTO productDTO2 = new ProductDTO();
-        productDTO2.setId(2);
-        productDTO2.setName("product2");
-
-        when(productMapper.mapEntityToDTO(product2)).thenReturn(productDTO2);
-
-        List<ProductDTO> result = productService.getAllProducts();
+        List<Product> result = productService.getAllProducts();
         assertEquals(2, result.size());
-        assertTrue(result.containsAll(List.of(productDTO1, productDTO2)));
+        assertTrue(result.containsAll(List.of(product1, product2)));
     }
 
     @Test
     public void get_product_by_id_should_throw_exception_when_product_id_is_null() {
-        assertThrows(IllegalArgumentException.class,() -> productService.getProductById(null));
+        assertThrows(IllegalArgumentException.class, () -> productService.getProductById(null));
     }
 
     @Test
     public void get_product_by_id_should_throw_exception_when_no_product_found() {
-        assertThrows(NoSuchElementException.class,() -> productService.getProductById(0));
+        assertThrows(NoSuchElementException.class, () -> productService.getProductById(0));
     }
 
     @Test
     public void get_product_by_id_should_return_product_when_no_product_found() {
-        Product productSaved = new Product();
-        productSaved.setId(0);
-        when(productRepositoryPort.findProductById(any(Integer.class))).thenReturn(Optional.of(productSaved));
+        Product productEntity = new Product();
+        productEntity.setId(0);
+        when(productRepositoryPort.findProductById(any(Integer.class))).thenReturn(Optional.of(productEntity));
 
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setId(0);
-        when(productMapper.mapEntityToDTO(any(Product.class))).thenReturn(productDTO);
-
-
-        assertEquals(productDTO, productService.getProductById(0));
+        assertEquals(productEntity, productService.getProductById(0));
     }
 
     @Test
@@ -189,74 +164,66 @@ public class ProductServiceTest {
 
     @Test
     public void update_product_should_throw_exception_when_product_id_to_update_is_null() {
-        assertThrows(IllegalArgumentException.class, () -> productService.updateProduct(new ProductDTO()));
+        assertThrows(IllegalArgumentException.class, () -> productService.updateProduct(new Product()));
     }
 
     @Test
     public void update_product_should_throw_exception_when_product_id_to_update_is_not_found() {
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setId(1);
+        Product product = new Product();
+        product.setId(1);
+        product.setName("my updated product");
         when(productRepositoryPort.findProductById(any(Integer.class))).thenReturn(Optional.empty());
-        assertThrows(NoSuchElementException.class, () -> productService.updateProduct(productDTO));
+        assertThrows(NoSuchElementException.class, () -> productService.updateProduct(product));
     }
 
     @Test
     public void update_product_should_throw_exception_when_product_name_is_null() {
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setId(1);
-        assertThrows(IllegalArgumentException.class, () -> productService.updateProduct(productDTO));
+        Product product = new Product();
+        product.setId(1);
+        assertThrows(IllegalArgumentException.class, () -> productService.updateProduct(product));
     }
 
     @Test
     public void update_product_should_throw_exception_when_product_name_is_empty() {
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setId(1);
-        productDTO.setName("");
-        assertThrows(IllegalArgumentException.class, () -> productService.updateProduct(productDTO));
+        Product product = new Product();
+        product.setId(1);
+        product.setName("");
+        assertThrows(IllegalArgumentException.class, () -> productService.updateProduct(product));
     }
 
     @Test
     public void update_product_should_throw_exception_when_product_name_is_blank() {
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setId(1);
-        productDTO.setName("    ");
-        assertThrows(IllegalArgumentException.class, () -> productService.updateProduct(productDTO));
+        Product product = new Product();
+        product.setId(1);
+        product.setName("    ");
+        assertThrows(IllegalArgumentException.class, () -> productService.updateProduct(product));
     }
 
 
     @Test
     public void update_product_should_return_product_updated_succefully() {
-        ProductDTO productDtoToUpdate = new ProductDTO();
-        productDtoToUpdate.setId(1);
-        productDtoToUpdate.setName("My product Updated");
+        Product productToToUpdate = new Product();
+        productToToUpdate.setId(1);
+        productToToUpdate.setName("My product Updated");
 
         Product oldProduct = new Product();
         oldProduct.setId(1);
         oldProduct.setName("My product");
 
 
-        Product productToUpdate = new Product();
-        productToUpdate.setId(1);
-        productToUpdate.setName("My product Updated");
+        Product updatedProduct = new Product();
+        updatedProduct.setId(1);
+        updatedProduct.setName("My product updated");
 
-        Product updatedEntity = new Product();
-        updatedEntity.setId(1);
-        updatedEntity.setName("My product updated");
 
-        ProductDTO updatedEntityDto = new ProductDTO();
-        updatedEntityDto.setId(1);
-        updatedEntityDto.setName("My product updated");
+        when(productRepositoryPort.findProductById(productToToUpdate.getId())).thenReturn(Optional.of(oldProduct));
+        when(productRepositoryPort.save(productToToUpdate)).thenReturn(updatedProduct);
 
-        when(productRepositoryPort.findProductById(productDtoToUpdate.getId())).thenReturn(Optional.of(oldProduct));
-        when(productMapper.mapDTOToEntity(productDtoToUpdate)).thenReturn(productToUpdate);
-        when(productRepositoryPort.save(productToUpdate)).thenReturn(updatedEntity);
-        when(productMapper.mapEntityToDTO(updatedEntity)).thenReturn(updatedEntityDto);
+        Product resultOfUpdatedProduct = productService.updateProduct(productToToUpdate);
 
-        ProductDTO updatedProduct = productService.updateProduct(productDtoToUpdate);
-
-        assertNotNull(updatedProduct);
-        assertEquals(updatedEntityDto.getId(), updatedProduct.getId());
-        assertEquals(updatedEntityDto.getName(), updatedProduct.getName());
+        assertNotNull(resultOfUpdatedProduct);
+        assertEquals(updatedProduct.getId(), resultOfUpdatedProduct.getId());
+        assertEquals(updatedProduct.getName(), resultOfUpdatedProduct.getName());
     }
 
     @Test

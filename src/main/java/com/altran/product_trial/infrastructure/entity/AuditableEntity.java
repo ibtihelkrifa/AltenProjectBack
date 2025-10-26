@@ -1,4 +1,4 @@
-package com.altran.product_trial.domain;
+package com.altran.product_trial.infrastructure.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

@@ -1,22 +1,20 @@
-package com.altran.product_trial.domain;
+package com.altran.product_trial.infrastructure.entity;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.altran.product_trial.domain.model.InventoryStatus;
+import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Getter
-@Setter
-public class Product extends AuditableEntity {
+@Entity
+@Data
+@Table(name = "product")
+public class ProductEntity extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @NonNull
     private String name;
     private String code;
     private String description;
@@ -27,6 +25,7 @@ public class Product extends AuditableEntity {
     private Integer quantity;
     private Integer shellId;
     private Integer rating;
+    @Enumerated(EnumType.STRING)
     private InventoryStatus inventoryStatus;
 
 }

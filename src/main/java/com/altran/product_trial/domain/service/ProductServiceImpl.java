@@ -19,7 +19,7 @@ public class ProductServiceImpl implements ProductService {
         return productRepositoryPort.findAll();
     }
 
-    public Integer createProduct(com.altran.product_trial.domain.model.Product product) {
+    public Integer createProduct(Product product) {
 
         if (product == null) {
             throw new IllegalArgumentException("le produit ne doit pas être null");
@@ -32,7 +32,7 @@ public class ProductServiceImpl implements ProductService {
         if (product.getName() == null || product.getName().isEmpty() || product.getName().isBlank()) {
             throw new IllegalArgumentException("le nom du produit doit être rempli");
         }
-        if (product.getPrice() < 0) {
+        if (product.getPrice() == null || product.getPrice() < 0) {
             throw new IllegalArgumentException("le prix du produit doit être supérieur ou égal à zero");
         }
         Product createdProduct = productRepositoryPort.save(product);

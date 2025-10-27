@@ -91,6 +91,15 @@ public class ProductDTOEntityServiceTest {
     }
 
     @Test
+    public void should_throw_exception_when_price_is_null() {
+        Product product = new Product();
+        product.setName("My product");
+        product.setPrice(null);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> productService.createProduct(product));
+        assertEquals("le prix du produit doit être supérieur ou égal à zero", exception.getMessage());
+    }
+
+    @Test
     public void shoul_throw_exception_when_product_id_is_not_null() {
         Product product = new Product();
         product.setId(1);

@@ -11,7 +11,7 @@ public class Product {
     private String image;
     private String category;
     private String internalReference;
-    private Double price;
+    private Double price = 0.0;
     private Integer quantity;
     private Integer shellId;
     private Integer rating;

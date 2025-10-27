@@ -2,9 +2,13 @@ package com.altran.product_trial.infrastructure.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ProductDTO {
     private Integer id;
     @NotBlank(message = "Le nom du produit est obligatoire")

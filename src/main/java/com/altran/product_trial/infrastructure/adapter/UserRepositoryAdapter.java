@@ -1,18 +1,20 @@
-package com.altran.product_trial.infrastructure.repository;
+package com.altran.product_trial.infrastructure.adapter;
 
+import com.altran.product_trial.domain.model.User;
 import com.altran.product_trial.domain.port.out.UserRepositoryPort;
-import com.altran.product_trial.infrastructure.entity.User;
 import com.altran.product_trial.infrastructure.jpa.UserJPARepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.altran.product_trial.infrastructure.mapper.UserEntityMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
+@RequiredArgsConstructor
 public class UserRepositoryAdapter implements UserRepositoryPort {
 
-    @Autowired
-    UserJPARepository userJPARepository;
+    private final UserJPARepository userJPARepository;
+    private final UserEntityMapper userEntityMapper;
 
     @Override
     public boolean existsByEmail(String email) {
@@ -21,11 +23,11 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
 
     @Override
     public void save(User user) {
-        userJPARepository.save(user);
+        userJPARepository.save(userEntityMapper.toEntity(user));
     }
 
     @Override
     public Optional<User> findByEmail(String email) {
-        return userJPARepository.findByEmail(email);
+        return userJPARepository.findByEmail(email).map(u -> userEntityMapper.toDomain(u));
     }
 }

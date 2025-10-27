@@ -1,8 +1,8 @@
 package com.altran.product_trial.domain.port.in;
 
-import com.altran.product_trial.infrastructure.dto.AuthRequest;
+import com.altran.product_trial.infrastructure.dto.AuthRequestDTO;
 
 public interface AuthService {
 
-    String authenticate(AuthRequest request);
+    String authenticate(String email, String password);
 }

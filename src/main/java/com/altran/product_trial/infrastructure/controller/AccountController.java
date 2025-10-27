@@ -1,7 +1,10 @@
 package com.altran.product_trial.infrastructure.controller;
 
+import com.altran.product_trial.domain.model.User;
 import com.altran.product_trial.domain.port.in.UserService;
 import com.altran.product_trial.infrastructure.dto.UserDTO;
+import com.altran.product_trial.infrastructure.mapper.UserDtoMapper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,8 +19,11 @@ public class AccountController {
 
     private final UserService userService;
 
+    private final UserDtoMapper userDtoMapper;
+
     @PostMapping
-    public ResponseEntity<UserDTO> register(@RequestBody UserDTO userDTO) {
-        return ResponseEntity.ok(userService.createUser(userDTO));
+    public ResponseEntity<UserDTO> register(@RequestBody @Valid UserDTO userDTO) {
+        User user = userService.createUser(userDtoMapper.toDomain(userDTO));
+        return ResponseEntity.ok(userDtoMapper.toDTO(user));
     }
 }

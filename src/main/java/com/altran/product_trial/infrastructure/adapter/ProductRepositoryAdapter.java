@@ -1,4 +1,4 @@
-package com.altran.product_trial.infrastructure.repository;
+package com.altran.product_trial.infrastructure.adapter;
 
 import com.altran.product_trial.domain.model.Product;
 import com.altran.product_trial.domain.port.out.ProductRepositoryPort;
